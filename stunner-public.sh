@@ -11,7 +11,7 @@ error_exit() {
 
 # Set required environment variables
 get_env() {
-  export NODE_IP=${NODE_IP:-`curl ifconfig.me`}             # Default external IP
+  export NODE_IP=${NODE_IP:-`curl -4 ifconfig.me`}             # Default external IP
   export TLS_HOSTNAME=${TLS_HOSTNAME:-"$NODE_IP".nip.io}    # Deafult hostname for TLS certs
   export ISSUER_EMAIL=${ISSUER_EMAIL:-"info@example.com"}   # Deafult email for Let's Encrypt
   export TURN_USER=${TURN_USER:-"stunner-user"}             # Default TURN username
@@ -53,6 +53,13 @@ install_k3s() {
   curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
   echo 'source <(helm completion bash)' >>~/.bashrc
   helm version
+  
+  echo "[INFO] Waiting for system pods to be created in kube-system namespace..."
+  while [ $(kubectl get pods -n kube-system | grep -c Running) -le 1 ]; do
+    echo -n "."
+    sleep 1
+  done
+  echo "."
 }
 
 # Install Cert Manager
