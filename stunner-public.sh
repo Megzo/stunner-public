@@ -13,7 +13,7 @@ error_exit() {
 get_env() {
   export NODE_IP=${NODE_IP:-`curl -4 ifconfig.me`}             # Default external IP
   export TLS_HOSTNAME=${TLS_HOSTNAME:-"$NODE_IP".nip.io}    # Deafult hostname for TLS certs
-  export ISSUER_EMAIL=${ISSUER_EMAIL:-"info@example.com"}   # Deafult email for Let's Encrypt
+  export ISSUER_EMAIL=${ISSUER_EMAIL:-"info@stunner.cc"}   # Deafult email for Let's Encrypt
   export TURN_USER=${TURN_USER:-"stunner-user"}             # Default TURN username
   export TURN_PASSWORD=${TURN_PASSWORD:-"stunner-password"} # Default TURN password
 }
