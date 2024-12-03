@@ -93,7 +93,7 @@ spec:
     solvers:
     - http01:
         ingress:
-          class: traefik  
+          class: nginx  
 EOF
   kubectl get pods -n cert-manager
   
