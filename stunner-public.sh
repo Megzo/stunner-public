@@ -34,7 +34,7 @@ install_dependencies() {
 # Install K3s as master node
 install_k3s() {
   echo "[INFO] Installing K3s master node..."
-  curl -sfL https://get.k3s.io | sh -
+  curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik" sh -
   
   echo "[INFO] Set up kubectl"
   mkdir -p $HOME/.kube
@@ -60,6 +60,17 @@ install_k3s() {
     sleep 1
   done
   echo "."
+}
+
+# Install Cert Manager
+install_nginx_ingress() {
+  echo "[INFO] Installing Nginx Ingress..."
+  
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/baremetal/deploy.yaml
+  kubectl patch service -n ingress-nginx ingress-nginx-controller -p '{"spec": {"type": "LoadBalancer"}}'
+  echo "Waiting for nginx ingress to be ready..."
+  kubectl wait --for=condition=Ready -n ingress-nginx pod  -l app.kubernetes.io/component=controller --timeout=90s
+  kubectl get pods -n ingress-nginx
 }
 
 # Install Cert Manager
@@ -202,6 +213,7 @@ main() {
   update_system
   install_dependencies
   install_k3s
+  install_nginx_ingress
   install_certmanager
   install_stunner
   echo "[INFO] K3s setup completed successfully."
