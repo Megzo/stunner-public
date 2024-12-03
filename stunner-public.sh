@@ -77,7 +77,6 @@ spec:
         ingress:
           class: traefik  
 EOF
-  kubectl apply -f issuer.yaml
   kubectl get pods -n cert-manager
   
   # Add cert for STUNner
