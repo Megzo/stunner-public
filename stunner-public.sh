@@ -22,7 +22,7 @@ get_env() {
 update_system() {
   echo "[INFO] Updating system packages..."
   sudo apt-get update -y || error_exit "Failed to update package list."
-  sudo apt-get upgrade -y || error_exit "Failed to upgrade packages."
+  # sudo apt-get upgrade -y || error_exit "Failed to upgrade packages."
 }
 
 # Install dependencies
@@ -61,7 +61,7 @@ install_certmanager() {
   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.1/cert-manager.yaml
   echo "[INFO] Waiting for cert-manager to be ready..."
   kubectl wait --for=condition=Ready -n cert-manager pod  -l app.kubernetes.io/component=webhook --timeout=90s
- echo <<EOF | kubectl apply -f -
+ cat <<EOF | kubectl apply -f -
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -82,7 +82,7 @@ EOF
   
   # Add cert for STUNner
   kubectl create namespace stunner
-  echo <<EOF | kubectl apply -f -
+  cat <<EOF | kubectl apply -f -
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -100,13 +100,13 @@ EOF
 }
 
 # Install and configure STUNner
-install_certmanager() {
+install_stunner() {
   echo "[INFO] Installing Cert-Manager..."
   helm repo add stunner https://l7mp.io/stunner
   helm repo update
   helm install stunner-gateway-operator stunner/stunner-gateway-operator --create-namespace --namespace=stunner --set stunnerGatewayOperator.dataplane.spec.hostNetwork=true
   
-  echo <<EOF | kubectl apply -f -
+  cat <<EOF | kubectl apply -f -
 apiVersion: stunner.l7mp.io/v1
 kind: GatewayConfig
 metadata:
