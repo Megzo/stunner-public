@@ -125,7 +125,7 @@ install_stunner() {
   echo "[INFO] Installing Cert-Manager..."
   helm repo add stunner https://l7mp.io/stunner
   helm repo update
-  helm install stunner-gateway-operator stunner/stunner-gateway-operator --create-namespace --namespace=stunner --set stunnerGatewayOperator.dataplane.spec.hostNetwork=true
+  helm upgrade --install stunner-gateway-operator stunner/stunner-gateway-operator --create-namespace --namespace=stunner --set stunnerGatewayOperator.dataplane.spec.hostNetwork=true
   
   cat <<EOF | kubectl apply -f -
 apiVersion: stunner.l7mp.io/v1
