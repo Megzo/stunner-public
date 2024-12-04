@@ -98,8 +98,12 @@ EOF
   kubectl get pods -n cert-manager
   
   # Add cert for STUNner
-  kubectl create namespace stunner
   cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: stunner
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -208,7 +212,7 @@ EOF
 
 # Main script execution
 main() {
-  echo "[INFO] Starting K3s setup..."
+  echo "[INFO] Starting K3s and STUNner..."
   get_env
   update_system
   install_dependencies
@@ -216,7 +220,15 @@ main() {
   install_nginx_ingress
   install_certmanager
   install_stunner
-  echo "[INFO] K3s setup completed successfully."
+  echo "[INFO] STUNner setup completed successfully."
+  echo "       your TURN server should be accessible in the following endpoints:"
+  echo "       hostname:  $TLS_HOSTNAME"
+  echo "       username:  $TURN_USER"
+  echo "       password:  $TURN_PASSWORD"
+  echo "       turn uris: turn:$TLS_HOSTNAME:3478?transport=udp"
+  echo "                  turn:$TLS_HOSTNAME:3478?transport=tcp"
+  echo "                  turns:$TLS_HOSTNAME:5349?transport=udp"
+  echo "                  turns:$TLS_HOSTNAME:5349?transport=tcp"  
 }
 
 main "$@"
